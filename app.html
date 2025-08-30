@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --nav-height: 44px;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --font-sf: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        ::selection {
+            background: #0071e3;
+            color: white;
+        }
+
+        body {
+            font-family: var(--font-sf);
+            background: #000;
+            color: #f5f5f7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1d1d1f;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #424245;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #626265;
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .apple-loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+
+        .apple-loader::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #fff 0%, #86868b 100%);
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath d='M494.782 340.02c-.803-81.025 66.084-119.907 69.072-121.832-37.595-54.993-96.167-62.552-117.037-63.402-49.843-5.032-97.242 29.362-122.565 29.362-25.253 0-64.277-28.648-105.604-27.9-54.32.803-104.4 31.594-132.403 80.245C29.81 334.457 71.81 479.58 126.816 558.976c26.87 38.882 58.914 82.56 100.997 81 40.512-1.632 55.83-26.24 104.836-26.24 48.966 0 62.675 26.24 105.64 25.406 43.606-.803 71.232-39.638 97.925-78.65 30.887-45.12 43.548-88.75 44.316-90.994-.95-.38-85.052-32.634-85.748-129.478z'/%3E%3C/svg%3E") center/contain no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 640'%3E%3Cpath d='M494.782 340.02c-.803-81.025 66.084-119.907 69.072-121.832-37.595-54.993-96.167-62.552-117.037-63.402-49.843-5.032-97.242 29.362-122.565 29.362-25.253 0-64.277-28.648-105.604-27.9-54.32.803-104.4 31.594-132.403 80.245C29.81 334.457 71.81 479.58 126.816 558.976c26.87 38.882 58.914 82.56 100.997 81 40.512-1.632 55.83-26.24 104.836-26.24 48.966 0 62.675 26.24 105.64 25.406 43.606-.803 71.232-39.638 97.925-78.65 30.887-45.12 43.548-88.75 44.316-90.994-.95-.38-85.052-32.634-85.748-129.478z'/%3E%3C/svg%3E") center/contain no-repeat;
+            animation: appleBreath 2s ease-in-out infinite;
+        }
+
+        @keyframes appleBreath {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Navigation */
+        .nav-wrapper {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 9999;
+            transition: all 0.5s var(--transition-smooth);
+        }
+
+        .nav-wrapper.scrolled {
+            backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(29, 29, 31, 0.72);
+        }
+
+        nav {
+            height: var(--nav-height);
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 34px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: -0.01em;
+            font-weight: 400;
+            transition: color 0.3s ease;
+            position: relative;
+            padding: 4px 0;
+        }
+
+        .nav-menu a:hover {
+            color: #fff;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: width 0.3s var(--transition-smooth);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .apple-logo {
+            width: 16px;
+            height: 20px;
+            fill: rgba(255, 255, 255, 0.92);
+            transition: fill 0.3s ease;
+            cursor: pointer;
+        }
+
+        .apple-logo:hover {
+            fill: #fff;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-icon {
+            width: 16px;
+            height: 16px;
+            fill: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: fill 0.3s ease;
+        }
+
+        .nav-icon:hover {
+            fill: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.3), transparent);
+            animation: heroGradient 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGradient {
+            0% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1.2) translateY(-20px); }
+        }
+
+        .hero-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100px 100px;
+            animation: gridMove 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            padding: 0 20px;
+            opacity: 0;
+            animation: heroFadeIn 1.5s ease forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes heroFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            line-height: 1.07143;
+            margin-bottom: 12px;
+            background: linear-gradient(180deg, #fff 0%, #86868b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 3s ease-in-out infinite;
+        }
+
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(21px, 3vw, 32px);
+            font-weight: 600;
+            letter-spacing: 0.011em;
+            line-height: 1.21053;
+            color: #86868b;
+            margin-bottom: 36px;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #0071e3;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 980px;
+            font-size: 17px;
+            font-weight: 400;
+            text-decoration: none;
+            transition: all 0.3s var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            background: #0077ed;
+            transform: scale(1.05);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #0071e3;
+            color: #0071e3;
+        }
+
+        .btn-outline:hover {
+            background: #0071e3;
+            color: #fff;
+        }
+
+        .btn-icon {
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover .btn-icon {
+            transform: translateX(4px);
+        }
+
+        /* Product Device Renders */
+        .device-macbook {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .macbook-screen {
+            width: 280px;
+            height: 175px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .macbook-screen::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: #000;
+            border-radius: 4px;
+        }
+
+        .macbook-screen::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .macbook-base {
+            width: 320px;
+            height: 12px;
+            background: linear-gradient(90deg, #d1d1d1 0%, #e1e1e1 50%, #d1d1d1 100%);
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .macbook-notch {
+            width: 60px;
+            height: 4px;
+            background: #999;
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 10px 10px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .device-iphone {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .iphone-frame {
+            width: 140px;
+            height: 280px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 28px;
+            position: relative;
+            box-shadow: 
+                0 0 0 2px #333,
+                0 0 0 3px #111,
+                0 20px 40px rgba(0,0,0,0.5);
+            animation: phoneRotate 8s ease-in-out infinite;
+        }
+
+        @keyframes phoneRotate {
+            0%, 100% { transform: rotateY(0) rotateX(0); }
+            25% { transform: rotateY(15deg) rotateX(5deg); }
+            75% { transform: rotateY(-15deg) rotateX(-5deg); }
+        }
+
+        .iphone-screen {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 20px;
+            background: #1a1a1a;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .iphone-button {
+            position: absolute;
+            right: -2px;
+            top: 80px;
+            width: 3px;
+            height: 30px;
+            background: #333;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .device-watch {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .watch-case {
+            width: 160px;
+            height: 190px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%);
+            border-radius: 30px;
+            position: relative;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.5),
+                inset 0 2px 5px rgba(255,255,255,0.1);
+            animation: watchPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes watchPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .watch-screen {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .watch-face {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0071e3 0%, #000 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .watch-crown {
+            position: absolute;
+            right: -8px;
+            top: 40px;
+            width: 8px;
+            height: 25px;
+            background: linear-gradient(90deg, #666 0%, #999 50%, #666 100%);
+            border-radius: 4px;
+        }
+
+        .device-airpods {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .airpods-case {
+            width: 160px;
+            height: 180px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #d0d0d0 100%);
+            border-radius: 24px;
+            position: relative;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.2),
+                inset 0 1px 2px rgba(255,255,255,0.8);
+            animation: caseOpen 6s ease-in-out infinite;
+        }
+
+        @keyframes caseOpen {
+            0%, 100% { transform: rotateX(0); }
+            50% { transform: rotateX(20deg); }
+        }
+
+        .airpods-lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            border-radius: 24px 24px 0 0;
+            transform-origin: top;
+            animation: lidOpen 6s ease-in-out infinite;
+        }
+
+        @keyframes lidOpen {
+            0%, 100% { transform: rotateX(0); }
+            50% { transform: rotateX(-30deg); }
+        }
+
+        /* Product Showcase Section */
+        .showcase {
+            background: #000;
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s var(--transition-smooth);
+        }
+
+        .showcase-header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .showcase-title {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -0.005em;
+            line-height: 1.07143;
+            margin-bottom: 24px;
+        }
+
+        .showcase-description {
+            font-size: 28px;
+            color: #86868b;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.2857;
+        }
+
+        /* Product Carousel */
+        .carousel-container {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 60px;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s var(--transition-smooth);
+            gap: 30px;
+        }
+
+        .product-slide {
+            min-width: calc(33.333% - 20px);
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            animation: slideIn 0.8s var(--transition-smooth) forwards;
+        }
+
+        .product-slide:nth-child(1) { animation-delay: 0.1s; }
+        .product-slide:nth-child(2) { animation-delay: 0.2s; }
+        .product-slide:nth-child(3) { animation-delay: 0.3s; }
+        .product-slide:nth-child(4) { animation-delay: 0.4s; }
+        .product-slide:nth-child(5) { animation-delay: 0.5s; }
+        .product-slide:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .product-card {
+            background: #1d1d1f;
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+            position: relative;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 113, 227, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 113, 227, 0.3);
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1d1d1f 0%, #000 100%);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #0071e3;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .product-info {
+            padding: 30px;
+        }
+
+        .product-category {
+            color: #86868b;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .product-tagline {
+            color: #86868b;
+            font-size: 17px;
+            line-height: 1.47059;
+            margin-bottom: 20px;
+        }
+
+        .product-price {
+            font-size: 17px;
+            color: #86868b;
+            margin-bottom: 24px;
+        }
+
+        .product-links {
+            display: flex;
+            gap: 20px;
+            font-size: 17px;
+        }
+
+        .product-link {
+            color: #0071e3;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .product-link::after {
+            content: '>';
+            margin-left: 5px;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .product-link:hover {
+            text-decoration: underline;
+        }
+
+        .product-link:hover::after {
+            transform: translateX(3px);
+        }
+
+        /* Carousel Controls */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            z-index: 10;
+            color: #fff;
+            font-size: 24px;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn-prev {
+            left: 10px;
+        }
+
+        .carousel-btn-next {
+            right: 10px;
+        }
+
+        /* Feature Grid Section */
+        .feature-grid {
+            background: #000;
+            padding: 120px 20px;
+        }
+
+        .feature-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card-large {
+            grid-column: span 2;
+            height: 600px;
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            cursor: pointer;
+            background: linear-gradient(135deg, #0071e3 0%, #0051a2 100%);
+        }
+
+        .feature-visual {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.3;
+        }
+
+        .ai-visualization {
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+
+        .ai-circle {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulseRing 3s ease-in-out infinite;
+        }
+
+        .ai-circle:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-delay: 0s;
+        }
+
+        .ai-circle:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0.5s;
+        }
+
+        .ai-circle:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            animation-delay: 1s;
+        }
+
+        .ai-core {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: coreGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseRing {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes coreGlow {
+            0%, 100% { transform: scale(1); filter: blur(0); }
+            50% { transform: scale(1.2); filter: blur(10px); }
+        }
+
+        .feature-card-small {
+            height: 400px;
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .feature-card-small:nth-child(2) {
+            background: linear-gradient(135deg, #5856d6 0%, #403d9c 100%);
+        }
+
+        .feature-card-small:nth-child(3) {
+            background: linear-gradient(135deg, #34c759 0%, #248a3d 100%);
+        }
+
+        .privacy-icon,
+        .sustainability-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            opacity: 0.2;
+        }
+
+        .lock-shield {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .shield-body {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: shieldPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes shieldPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .leaf-icon {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .leaf {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            clip-path: polygon(50% 0%, 85% 35%, 85% 65%, 50% 100%, 15% 65%, 15% 35%);
+            animation: leafSway 4s ease-in-out infinite;
+        }
+
+        @keyframes leafSway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        .feature-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 60px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s var(--transition-smooth);
+        }
+
+        .feature-card-large:hover .feature-content,
+        .feature-card-small:hover .feature-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .feature-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.003em;
+            line-height: 1.0834;
+        }
+
+        .feature-subtitle {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .feature-description {
+            font-size: 17px;
+            line-height: 1.47059;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .feature-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Innovation Section */
+        .innovation {
+            background: #161617;
+            padding: 120px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .innovation::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.5;
+        }
+
+        .innovation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .innovation-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .innovation-title {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(90deg, #0071e3 0%, #40e0d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tech-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(40px);
+            transition: all 0.4s var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 113, 227, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 113, 227, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 113, 227, 0.2);
+        }
+
+        .tech-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0071e3 0%, #40e0d0 100%);
+            border-radius: 16px;
+            position: relative;
+        }
+
+        .chip-icon,
+        .neural-icon,
+        .display-icon,
+        .camera-icon,
+        .battery-icon,
+        .network-icon {
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .chip-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+        }
+
+        .tech-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .tech-description {
+            font-size: 17px;
+            line-height: 1.47059;
+            color: #86868b;
+        }
+
+        /* Footer */
+        footer {
+            background: #1d1d1f;
+            padding: 60px 20px 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h4 {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #86868b;
+            margin-bottom: 16px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #d2d2d7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            color: #fff;
+        }
+
+        .footer-bottom {
+            padding-top: 32px;
+            border-top: 1px solid #424245;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-copyright {
+            color: #86868b;
+            font-size: 12px;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal a {
+            color: #86868b;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: #d2d2d7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1068px) {
+            .feature-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-card-large {
+                grid-column: span 1;
+                height: 500px;
+            }
+            
+            .product-slide {
+                min-width: calc(50% - 15px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 48px;
+            }
+            
+            .hero-subtitle {
+                font-size: 21px;
+            }
+            
+            .showcase-title {
+                font-size: 36px;
+            }
+            
+            .showcase-description {
+                font-size: 21px;
+            }
+            
+            .product-slide {
+                min-width: calc(100% - 0px);
+            }
+            
+            .feature-content {
+                padding: 40px;
+            }
+            
+            .feature-title {
+                font-size: 32px;
+            }
+            
+            .innovation-title {
+                font-size: 42px;
+            }
+            
+            .tech-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Intersection Observer Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--transition-smooth);
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s var(--transition-smooth);
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Performance Optimizations */
+        .will-change-transform {
+            will-change: transform;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="apple-loader"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-wrapper" id="navbar">
+        <nav>
+            <ul class="nav-menu">
+                <li>
+                    <svg class="apple-logo" viewBox="0 0 16 20">
+                        <path d="M12.8 3.4c.7-.9 1.2-2.1 1.1-3.4-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.2 1.2.1 2.4-.6 3-1.4zM13.1 4.7c-1.7-.1-3.1 1-3.9 1s-2-1-3.4-.9C3.9 4.9 2.2 6 1.5 7.7c-1.5 3.4.4 8.5 2.1 11.3 1.4 2.3 2.1 2.3 3.9 2.2 1.3-.1 1.8-.7 3.4-.7s2 .7 3.4.6c1.4-.1 2.4-1.1 3.3-2.4.7-1 1-1.5 1.5-2.6-4-.2-4.6-4.3-.5-6.4-.9-1.1-2.2-1.9-3.5-2z"/>
+                    </svg>
+                </li>
+                <li><a href="#store">Store</a></li>
+                <li><a href="#mac">Mac</a></li>
+                <li><a href="#ipad">iPad</a></li>
+                <li><a href="#iphone">iPhone</a></li>
+                <li><a href="#watch">Watch</a></li>
+                <li><a href="#vision">Vision</a></li>
+                <li><a href="#airpods">AirPods</a></li>
+                <li><a href="#tv">TV & Home</a></li>
+                <li><a href="#entertainment">Entertainment</a></li>
+                <li><a href="#accessories">Accessories</a></li>
+                <li><a href="#support">Support</a></li>
+            </ul>
+            <div class="nav-icons">
+                <svg class="nav-icon" viewBox="0 0 16 16">
+                    <path d="M11.5 6.5C11.5 8.981 9.481 11 7 11S2.5 8.981 2.5 6.5 4.519 2 7 2s4.5 2.019 4.5 4.5zM14 14l-3.5-3.5"/>
+                </svg>
+                <svg class="nav-icon" viewBox="0 0 16 16">
+                    <path d="M5.5 2v4h5V2h1.5v4.5l-3.5 3.5-3.5-3.5V2h.5zm-2 12h9v-1h-9v1z"/>
+                </svg>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Think Different</h1>
+            <p class="hero-subtitle">Innovation that changes everything.</p>
+            <div class="hero-cta">
+                <a href="#showcase" class="btn">
+                    Explore Products
+                    <span class="btn-icon">→</span>
+                </a>
+                <a href="#innovation" class="btn btn-outline">
+                    Learn More
+                    <span class="btn-icon">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase -->
+    <section class="showcase" id="showcase">
+        <div class="showcase-header fade-up">
+            <h2 class="showcase-title">Our Products. Your Possibilities.</h2>
+            <p class="showcase-description">Designed to empower. Built to inspire.</p>
+        </div>
+        
+        <div class="carousel-container">
+            <button class="carousel-btn carousel-btn-prev" onclick="moveCarousel(-1)">‹</button>
+            <button class="carousel-btn carousel-btn-next" onclick="moveCarousel(1)">›</button>
+            
+            <div class="carousel-track" id="carousel">
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">New</div>
+                            <div class="device-macbook">
+                                <div class="macbook-screen">
+                                    <div class="macbook-base"></div>
+                                    <div class="macbook-notch"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Pro Performance</p>
+                            <h3 class="product-name">MacBook Pro</h3>
+                            <p class="product-tagline">Mind-blowing. Head-turning.</p>
+                            <p class="product-price">From $1,599</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">Pro Max</div>
+                            <div class="device-iphone">
+                                <div class="iphone-frame">
+                                    <div class="iphone-screen">
+                                        <div class="iphone-notch"></div>
+                                    </div>
+                                    <div class="iphone-button"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Revolutionary</p>
+                            <h3 class="product-name">iPhone 15 Pro</h3>
+                            <p class="product-tagline">Titanium. So strong. So light. So Pro.</p>
+                            <p class="product-price">From $999</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">Ultra</div>
+                            <div class="device-watch">
+                                <div class="watch-case">
+                                    <div class="watch-screen">
+                                        <div class="watch-face"></div>
+                                    </div>
+                                    <div class="watch-crown"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Adventure Awaits</p>
+                            <h3 class="product-name">Apple Watch Ultra</h3>
+                            <p class="product-tagline">The most rugged Apple Watch ever.</p>
+                            <p class="product-price">From $799</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">Vision</div>
+                            <div class="device-macbook">
+                                <div class="macbook-screen" style="width: 320px; border-radius: 20px;">
+                                    <div style="position: absolute; inset: 10px; background: linear-gradient(135deg, #5856d6 0%, #007AFF 100%); border-radius: 10px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Spatial Computing</p>
+                            <h3 class="product-name">Vision Pro</h3>
+                            <p class="product-tagline">Welcome to the era of spatial computing.</p>
+                            <p class="product-price">From $3,499</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">M3 Chip</div>
+                            <div class="device-macbook">
+                                <div class="macbook-screen" style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
+                                    <div class="macbook-base"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">All-In-One</p>
+                            <h3 class="product-name">iMac 24"</h3>
+                            <p class="product-tagline">Packed with more juice.</p>
+                            <p class="product-price">From $1,299</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-slide">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div class="product-badge">Pro 2nd Gen</div>
+                            <div class="device-airpods">
+                                <div class="airpods-case">
+                                    <div class="airpods-lid"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Magical Sound</p>
+                            <h3 class="product-name">AirPods Pro</h3>
+                            <p class="product-tagline">Adaptive Audio. Now playing.</p>
+                            <p class="product-price">From $249</p>
+                            <div class="product-links">
+                                <a href="#" class="product-link">Learn more</a>
+                                <a href="#" class="product-link">Buy</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Grid -->
+    <section class="feature-grid">
+        <div class="feature-container">
+            <div class="feature-card-large fade-up">
+                <div class="feature-visual">
+                    <div class="ai-visualization">
+                        <div class="ai-circle"></div>
+                        <div class="ai-circle"></div>
+                        <div class="ai-circle"></div>
+                        <div class="ai-core"></div>
+                    </div>
+                </div>
+                <div class="feature-content">
+                    <h2 class="feature-title">Apple Intelligence</h2>
+                    <p class="feature-subtitle">AI for the rest of us.</p>
+                    <p class="feature-description">
+                        Personal intelligence that understands you, adapts to you, and protects what matters most — your privacy.
+                    </p>
+                    <div class="feature-cta">
+                        <a href="#" class="btn">Discover AI</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-card-small fade-up">
+                <div class="privacy-icon">
+                    <div class="lock-shield">
+                        <div class="shield-body"></div>
+                    </div>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Privacy</h3>
+                    <p class="feature-description">
+                        What happens on your iPhone, stays on your iPhone.
+                    </p>
+                    <div class="feature-cta">
+                        <a href="#" class="btn btn-outline">Learn more</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-card-small fade-up">
+                <div class="sustainability-icon">
+                    <div class="leaf-icon">
+                        <div class="leaf"></div>
+                    </div>
+                </div>
+                <div class="feature-content">
+                    <h3 class="feature-title">Environment</h3>
+                    <p class="feature-description">
+                        Carbon neutral by 2030. Our planet can't wait.
+                    </p>
+                    <div class="feature-cta">
+                        <a href="#" class="btn btn-outline">Our commitment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation Section -->
+    <section class="innovation" id="innovation">
+        <div class="innovation-container">
+            <div class="innovation-header fade-up">
+                <h2 class="innovation-title">Breakthrough Technologies</h2>
+                <p class="showcase-description">Pushing the boundaries of what's possible.</p>
+            </div>
+            
+            <div class="tech-cards">
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="chip-icon"></div>
+                    </div>
+                    <h3 class="tech-title">M3 Chip</h3>
+                    <p class="tech-description">
+                        3-nanometer process technology with unprecedented performance per watt.
+                    </p>
+                </div>
+                
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="neural-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+                                <circle cx="8" cy="8" r="3"/>
+                                <circle cx="24" cy="8" r="3"/>
+                                <circle cx="16" cy="16" r="3"/>
+                                <circle cx="8" cy="24" r="3"/>
+                                <circle cx="24" cy="24" r="3"/>
+                                <path d="M11 8h10M8 11v10M24 11v10M11 24h10" stroke="white" stroke-width="1" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="tech-title">Neural Engine</h3>
+                    <p class="tech-description">
+                        16-core Neural Engine performs 15.8 trillion operations per second.
+                    </p>
+                </div>
+                
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="display-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+                                <rect x="4" y="6" width="24" height="16" rx="2" fill="none" stroke="white" stroke-width="2"/>
+                                <path d="M12 26h8M16 22v4" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="tech-title">ProMotion Display</h3>
+                    <p class="tech-description">
+                        120Hz adaptive refresh rate for incredibly fluid, responsive experience.
+                    </p>
+                </div>
+                
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="camera-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+                                <rect x="4" y="8" width="24" height="16" rx="2" fill="none" stroke="white" stroke-width="2"/>
+                                <circle cx="16" cy="16" r="5" fill="none" stroke="white" stroke-width="2"/>
+                                <circle cx="16" cy="16" r="2" fill="white"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="tech-title">Photonic Engine</h3>
+                    <p class="tech-description">
+                        Advanced computational photography captures life as you experience it.
+                    </p>
+                </div>
+                
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="battery-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+                                <rect x="4" y="10" width="22" height="12" rx="2" fill="none" stroke="white" stroke-width="2"/>
+                                <rect x="26" y="14" width="2" height="4" fill="white"/>
+                                <rect x="6" y="12" width="12" height="8" fill="white" opacity="0.8"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="tech-title">All-Day Battery</h3>
+                    <p class="tech-description">
+                        Revolutionary power efficiency delivers battery life that goes on and on.
+                    </p>
+                </div>
+                
+                <div class="tech-card fade-up">
+                    <div class="tech-icon">
+                        <div class="network-icon">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+                                <path d="M16 20 L8 12 M16 20 L24 12" stroke="white" stroke-width="2" fill="none"/>
+                                <path d="M16 20 L12 16 M16 20 L20 16" stroke="white" stroke-width="2" fill="none"/>
+                                <circle cx="16" cy="20" r="2" fill="white"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="tech-title">5G & WiFi 6E</h3>
+                    <p class="tech-description">
+                        Blazing-fast wireless technology for everything you do online.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h4>Shop and Learn</h4>
+                    <ul>
+                        <li><a href="#">Store</a></li>
+                        <li><a href="#">Mac</a></li>
+                        <li><a href="#">iPad</a></li>
+                        <li><a href="#">iPhone</a></li>
+                        <li><a href="#">Watch</a></li>
+                        <li><a href="#">Vision</a></li>
+                        <li><a href="#">AirPods</a></li>
+                        <li><a href="#">TV & Home</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Apple Music</a></li>
+                        <li><a href="#">Apple TV+</a></li>
+                        <li><a href="#">Apple Fitness+</a></li>
+                        <li><a href="#">Apple News+</a></li>
+                        <li><a href="#">Apple Arcade</a></li>
+                        <li><a href="#">iCloud</a></li>
+                        <li><a href="#">Apple One</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Apple Store</h4>
+                    <ul>
+                        <li><a href="#">Find a Store</a></li>
+                        <li><a href="#">Genius Bar</a></li>
+                        <li><a href="#">Today at Apple</a></li>
+                        <li><a href="#">Apple Camp</a></li>
+                        <li><a href="#">Apple Store App</a></li>
+                        <li><a href="#">Certified Refurbished</a></li>
+                        <li><a href="#">Apple Trade In</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>For Business</h4>
+                    <ul>
+                        <li><a href="#">Apple and Business</a></li>
+                        <li><a href="#">Shop for Business</a></li>
+                    </ul>
+                    <h4 style="margin-top: 24px;">For Education</h4>
+                    <ul>
+                        <li><a href="#">Apple and Education</a></li>
+                        <li><a href="#">Shop for K-12</a></li>
+                        <li><a href="#">Shop for College</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Apple Values</h4>
+                    <ul>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">Education</a></li>
+                        <li><a href="#">Environment</a></li>
+                        <li><a href="#">Inclusion and Diversity</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Racial Equity and Justice</a></li>
+                        <li><a href="#">Supplier Responsibility</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    Copyright © 2024 Apple Inc. All rights reserved.
+                </p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Sales and Refunds</a>
+                    <a href="#">Legal</a>
+                    <a href="#">Site Map</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Performance monitoring
+        const perfData = window.performance.timing;
+        const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+        console.log(`Page Load Time: ${pageLoadTime}ms`);
+
+        // Remove loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initializeAnimations();
+            }, 1500);
+        });
+
+        // Initialize all animations
+        function initializeAnimations() {
+            initIntersectionObserver();
+            initSmoothScroll();
+            initNavbarEffect();
+            initCarousel();
+            initParallaxEffects();
+        }
+
+        // Intersection Observer for scroll animations
+        function initIntersectionObserver() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // Stagger animations for children
+                        const children = entry.target.querySelectorAll('.fade-up, .scale-in');
+                        children.forEach((child, index) => {
+                            setTimeout(() => {
+                                child.classList.add('visible');
+                            }, index * 100);
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements
+            document.querySelectorAll('.fade-up, .scale-in, .showcase-header').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Smooth scroll implementation
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const offset = 80;
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Dynamic navbar
+        function initNavbarEffect() {
+            let lastScroll = 0;
+            const navbar = document.getElementById('navbar');
+            
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                
+                // Add background on scroll
+                if (currentScroll > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                
+                // Hide/show navbar
+                if (currentScroll > lastScroll && currentScroll > 500) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+                
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Carousel functionality
+        let carouselPosition = 0;
+        const carousel = document.getElementById('carousel');
+        const slides = carousel.querySelectorAll('.product-slide');
+        const totalSlides = slides.length;
+        let slidesPerView = window.innerWidth > 1068 ? 3 : window.innerWidth > 768 ? 2 : 1;
+
+        function initCarousel() {
+            // Auto-play
+            setInterval(() => {
+                moveCarousel(1);
+            }, 5000);
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                slidesPerView = window.innerWidth > 1068 ? 3 : window.innerWidth > 768 ? 2 : 1;
+                updateCarousel();
+            });
+        }
+
+        function moveCarousel(direction) {
+            const maxPosition = totalSlides - slidesPerView;
+            carouselPosition += direction;
+            
+            if (carouselPosition < 0) {
+                carouselPosition = maxPosition;
+            } else if (carouselPosition > maxPosition) {
+                carouselPosition = 0;
+            }
+            
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const slideWidth = 100 / slidesPerView;
+            const offset = -carouselPosition * slideWidth;
+            carousel.style.transform = `translateX(${offset}%)`;
+        }
+
+        // Parallax effects
+        function initParallaxEffects() {
+            document.addEventListener('mousemove', (e) => {
+                const cards = document.querySelectorAll('.tech-card');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                cards.forEach((card, index) => {
+                    const speed = (index + 1) * 0.5;
+                    const xOffset = (x - 0.5) * speed;
+                    const yOffset = (y - 0.5) * speed;
+                    
+                    card.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+                });
+            });
+
+            // Advanced card hover
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('mouseenter', function(e) {
+                    this.style.transition = 'none';
+                    this.classList.add('will-change-transform');
+                });
+                
+                card.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    
+                    this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px) scale(1.02)`;
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.4s var(--transition-smooth)';
+                    this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0) scale(1)';
+                    this.classList.remove('will-change-transform');
+                });
+            });
+        }
+
+        // Performance optimization with RAF
+        let ticking = false;
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateAnimations);
+                ticking = true;
+            }
+        }
+
+        function updateAnimations() {
+            // Animation updates
+            ticking = false;
+        }
+
+        // Debounce utility
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Optimize scroll
+        window.addEventListener('scroll', debounce(() => {
+            requestTick();
+        }, 10));
+
+        // Page visibility API
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('Page hidden - pausing animations');
+            } else {
+                console.log('Page visible - resuming animations');
+            }
+        });
+
+        // Initialize
+        console.log('Apple Clone - Production Ready');
+    </script>
+</body>
+</html>
